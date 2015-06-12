@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.firefox.webdriver import WebDriver
 import unittest
+from group import Group
 
 def is_alert_present(wd):
     try:
@@ -25,26 +26,26 @@ class testAddgroup(unittest.TestCase):
         wd.find_element_by_name("user").send_keys(username)
         wd.find_element_by_name("pass").click()
         wd.find_element_by_name("pass").clear()
-        wd.find_element_by_name("user").send_keys(password)
+        wd.find_element_by_name("pass").send_keys(password)
         wd.find_element_by_css_selector("input[type=\"submit\"]").click()
 
     def open_groups_page(self, wd):
         # open group page
         wd.find_element_by_link_text("groups").click()
 
-    def create_group(self, wd):
+    def create_group(self, wd, Group):
         # init group creation
         wd.find_element_by_name("new").click()
         #fill grop fields
         wd.find_element_by_name("group_name").click()
         wd.find_element_by_name("group_name").clear()
-        wd.find_element_by_name("group_name").send_keys("TestGroup1")
+        wd.find_element_by_name("group_name").send_keys(Group.name)
         wd.find_element_by_name("group_header").click()
         wd.find_element_by_name("group_header").clear()
-        wd.find_element_by_name("group_header").send_keys("Myfirst Test group")
+        wd.find_element_by_name("group_header").send_keys(Group.header)
         wd.find_element_by_name("group_footer").click()
         wd.find_element_by_name("group_footer").clear()
-        wd.find_element_by_name("group_footer").send_keys("My first test group footer")
+        wd.find_element_by_name("group_footer").send_keys(Group.footer)
         # Submit group creation
         wd.find_element_by_name("submit").click()
 
@@ -68,9 +69,21 @@ class testAddgroup(unittest.TestCase):
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
         self.open_groups_page(wd)
-        self.create_group(wd)
+        self.create_group(wd, Group(name="TestGroup1", header="Myfirst Test group", footer="My first test group footer"))
         self.return_to_groups_page(wd)
         self.logout(success, wd)
+        self.assertTrue(success)
+
+    def test_testAddgroup(self):
+        success = True
+        wd = self.wd
+        self.open_home_page(wd)
+        self.login(wd, username="admin", password="secret")
+        self.open_groups_page(wd)
+        self.create_group(wd, Group(name="TestGroup2", header="MySecond Test group", footer="My second test group footer"))
+        self.return_to_groups_page(wd)
+        self.logout(success, wd)
+        self.assertTrue(success)
     
     def tearDown(self):
         self.wd.quit()
